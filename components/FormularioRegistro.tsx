@@ -189,7 +189,7 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
   }
 
   return (
-    <div className=" font-sansmin-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8 transition-all duration-500">
+    <div className=" font-sans min-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8 transition-all duration-500">
       
       {/* FORMULARIO */}
       <div className="bg-white w-full max-w-[400px] rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-up border border-gray-100 z-10">
