@@ -32,19 +32,22 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-xl p-8 border border-gray-100">
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-black text-gray-900">Iam<span className="text-[#ff6f00]">Paw</span>.</h1>
+                {/* Título en NEGRO PURO */}
+                <h1 className="text-3xl font-black text-black">Iam<span className="text-[#ff6f00]">Paw</span>.</h1>
                 <p className="text-gray-400 font-medium">Ingresá a tu cuenta</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
                 <input 
                     type="email" placeholder="Email" required 
-                    className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 font-medium"
+                    // Agregado: text-black y placeholder-gray-400
+                    className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 font-medium text-black placeholder-gray-400"
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <input 
                     type="password" placeholder="Contraseña" required 
-                    className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 font-medium"
+                    // Agregado: text-black y placeholder-gray-400
+                    className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 font-medium text-black placeholder-gray-400"
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <button 

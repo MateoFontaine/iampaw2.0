@@ -120,7 +120,7 @@ export default function EditMascotaPage() {
             genero: data.genero,
             telefono: telDisplay,
             descripcion: data.descripcion,
-            nombre_dueño: data.nombre_dueño || '', // Aseguramos que no sea null
+            nombre_dueño: data.nombre_dueño || '',
             perdido: data.perdido
         });
         setPreviewUrl(data.foto_url);
@@ -188,12 +188,10 @@ export default function EditMascotaPage() {
       setFormData(prev => ({ ...prev, perdido: !prev.perdido }));
   };
 
- if (loading) return (
+  if (loading) return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8">
-      
-      {/* SKELETON DEL FORMULARIO (IZQUIERDA) */}
+      {/* SKELETON */}
       <div className="bg-white w-full max-w-[420px] rounded-[2.5rem] shadow-xl border border-gray-100 p-6 space-y-6 animate-pulse">
-          {/* Header */}
           <div className="flex justify-between items-center pb-4 border-b border-gray-50">
              <div className="space-y-2">
                  <div className="h-6 w-24 bg-gray-200 rounded-md"></div>
@@ -201,13 +199,9 @@ export default function EditMascotaPage() {
              </div>
              <div className="h-8 w-16 bg-gray-200 rounded-lg"></div>
           </div>
-
-          {/* Foto Circle */}
           <div className="flex justify-center">
               <div className="w-24 h-24 rounded-full bg-gray-200 border-4 border-white shadow-sm"></div>
           </div>
-
-          {/* Inputs */}
           <div className="space-y-4">
               <div className="h-12 w-full bg-gray-200 rounded-xl"></div>
               <div className="flex gap-3">
@@ -219,18 +213,8 @@ export default function EditMascotaPage() {
               <div className="h-12 w-full bg-gray-200 rounded-xl"></div>
               <div className="h-20 w-full bg-gray-200 rounded-xl"></div>
           </div>
-
-          {/* Botón */}
           <div className="h-14 w-full bg-gray-200 rounded-xl mt-4"></div>
       </div>
-
-      {/* SKELETON DEL IPHONE (DERECHA) */}
-      <div className="hidden lg:block relative w-[380px] h-[780px] bg-black rounded-[3.5rem] border-[12px] border-black overflow-hidden opacity-50">
-          <div className="h-full w-full bg-gray-800 animate-pulse flex flex-col items-center justify-center">
-              <div className="text-gray-600 font-bold">Cargando Preview...</div>
-          </div>
-      </div>
-
     </div>
   );
 
@@ -279,27 +263,59 @@ export default function EditMascotaPage() {
             </label>
           </div>
 
-          <div className="relative group"><input type="text" name="nombre" value={formData.nombre} required className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" placeholder="Nombre" onChange={handleChange} /></div>
+          <div className="relative group">
+              <input 
+                type="text" name="nombre" value={formData.nombre} required 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                placeholder="Nombre" onChange={handleChange} 
+              />
+          </div>
           
           <div className="flex gap-3">
-             <div className="w-1/4"><input type="number" value={edadNum} onChange={(e) => setEdadNum(e.target.value)} className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium placeholder-gray-400" /></div>
-             <div className="w-1/3"><select value={edadUnidad} onChange={(e) => setEdadUnidad(e.target.value)} className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none"><option>Años</option><option>Meses</option></select></div>
-             <div className="w-full"><select name="genero" value={formData.genero} className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none text-gray-700" onChange={handleChange} required><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div>
+             <div className="w-1/4">
+                <input 
+                    type="number" value={edadNum} 
+                    className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium text-black placeholder-gray-400" 
+                    onChange={(e) => setEdadNum(e.target.value)} 
+                />
+             </div>
+             <div className="w-1/3">
+                <select value={edadUnidad} onChange={(e) => setEdadUnidad(e.target.value)} className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none text-black">
+                    <option>Años</option><option>Meses</option>
+                </select>
+             </div>
+             <div className="w-full">
+                <select name="genero" value={formData.genero} className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none text-black" onChange={handleChange} required>
+                    <option value="Macho">Macho</option><option value="Hembra">Hembra</option>
+                </select>
+             </div>
           </div>
 
           {/* TELEFONO */}
           <div className="relative group">
             <div className="absolute left-4 top-3.5 flex items-center gap-2 pointer-events-none"><span className="text-lg">🇦🇷</span><span className="text-gray-400 font-bold text-sm tracking-tight">+54 9</span><div className="h-4 w-px bg-gray-300 ml-1"></div></div>
-            <input type="tel" name="telefono" value={formData.telefono} required className="w-full pl-28 pr-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" onChange={handleChange} />
+            <input 
+                type="tel" name="telefono" value={formData.telefono} required 
+                className="w-full pl-28 pr-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                onChange={handleChange} 
+            />
           </div>
 
-          {/* --- AQUÍ AGREGUÉ EL INPUT DEL DUEÑO --- */}
           <div className="relative group">
-            <input type="text" name="nombre_dueño" value={formData.nombre_dueño} required className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" placeholder="Nombre del Dueño" onChange={handleChange} />
+            <input 
+                type="text" name="nombre_dueño" value={formData.nombre_dueño} required 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                placeholder="Nombre del Dueño" onChange={handleChange} 
+            />
           </div>
-          {/* ------------------------------------- */}
 
-          <div className="relative group"><textarea name="descripcion" value={formData.descripcion || ''} className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium h-20 resize-none placeholder-gray-400" placeholder="Datos Extra..." onChange={handleChange} /></div>
+          <div className="relative group">
+            <textarea 
+                name="descripcion" value={formData.descripcion || ''} 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium h-20 resize-none text-black placeholder-gray-400" 
+                placeholder="Datos Extra..." onChange={handleChange} 
+            />
+          </div>
 
           <button type="submit" disabled={updating} className={`w-full text-white font-bold py-4 rounded-xl shadow-lg active:scale-[0.98] transition-all hover:shadow-xl ${formData.perdido ? 'bg-red-600 hover:bg-red-700 shadow-red-200' : 'bg-[#ff6f00] hover:bg-[#e66400] shadow-orange-200'}`}>
             {updating ? 'Guardando...' : 'Guardar Cambios'}

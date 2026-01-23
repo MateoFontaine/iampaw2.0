@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,28 +12,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// --- SEO MASTER CONFIG ---
+// --- 1. CONFIGURACIÓN VIEWPORT (SENSACIÓN APP NATIVA) ---
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // ESTO BLOQUEA EL ZOOM
+  themeColor: '#ffffff', // Pinta la barrita de estado del celular de blanco
+};
+
+// --- 2. SEO MASTER CONFIG ---
 export const metadata: Metadata = {
-  // 1. URL BASE: Fundamental para que las fotos de compartir funcionen
+  // URL BASE: Fundamental para que las fotos de compartir funcionen
   metadataBase: new URL('https://iampaw.vercel.app'), 
 
-  // 2. TÍTULO INTELIGENTE
+  // TÍTULO INTELIGENTE
   title: {
     default: "IamPaw | Chapitas Inteligentes para Mascotas",
     template: "%s | IamPaw Argentina", 
   },
   
-  // 3. DESCRIPCIÓN OPTIMIZADA
+  // DESCRIPCIÓN OPTIMIZADA
   description: "La forma más segura de proteger a tu mascota. Sin aplicaciones, sin pilas y sin suscripciones. Sistema de identificación QR con geolocalización.",
   
-  // 4. PALABRAS CLAVE (Keywords)
+  // PALABRAS CLAVE
   keywords: ["chapitas qr", "mascotas perdidas", "identificación mascotas", "perros", "gatos", "seguridad mascotas", "argentina", "placa identificatoria"],
 
-  // 5. AUTOR Y CREADOR
+  // AUTOR Y CREADOR
   authors: [{ name: "Mateo Fontaine", url: "https://mateofontaine.com" }],
   creator: "Mateo Fontaine",
 
-  // 6. ROBOTS (Para que Google te indexe)
+  // ROBOTS
   robots: {
     index: true,
     follow: true,
@@ -46,7 +55,7 @@ export const metadata: Metadata = {
     },
   },
 
-  // 7. OPEN GRAPH (Cómo se ve en Facebook/WhatsApp/LinkedIn)
+  // OPEN GRAPH
   openGraph: {
     type: "website",
     locale: "es_AR",
@@ -56,7 +65,7 @@ export const metadata: Metadata = {
     siteName: "IamPaw",
     images: [
       {
-        url: "/og-image.jpg", // (Opcional: después podés subir una imagen linda llamada así a la carpeta public)
+        url: "/og-image.jpg", 
         width: 1200,
         height: 630,
         alt: "IamPaw Landing Page",
@@ -64,18 +73,17 @@ export const metadata: Metadata = {
     ],
   },
 
-  // 8. TWITTER CARDS
+  // TWITTER CARDS
   twitter: {
     card: "summary_large_image",
     title: "IamPaw | Chapitas Inteligentes",
     description: "La evolución de la chapita. Escaneá, contactá y recuperá.",
-    // images: ["/twitter-image.jpg"], 
   },
 
-  // 9. ÍCONOS (Aunque usamos icon.tsx, esto refuerza)
+  // ÍCONOS
   icons: {
     icon: '/icon',
-    apple: '/icon', // Next.js genera esto automático
+    apple: '/icon',
   },
 };
 

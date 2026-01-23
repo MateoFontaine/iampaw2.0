@@ -16,7 +16,6 @@ export default function LandingPage() {
 
   const demoPhoto = "https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=662&auto=format&fit=crop";
 
-  // Función para scroll suave
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -30,7 +29,8 @@ export default function LandingPage() {
       {/* NAVBAR */}
       <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all">
           <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-            <div className="text-2xl font-black tracking-tighter cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+            {/* LOGO: Iam en NEGRO PURO */}
+            <div className="text-2xl font-black tracking-tighter cursor-pointer text-black" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
                 Iam<span className="text-[#ff6f00]">Paw</span>.
             </div>
             <div className="flex gap-6 items-center">
@@ -52,7 +52,8 @@ export default function LandingPage() {
             <div className="inline-block bg-orange-50 border border-orange-100 text-[#ff6f00] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
                 🚀 La evolución de la chapita
             </div>
-            <h1 className="text-5xl lg:text-7xl font-black text-gray-900 tracking-tighter leading-[0.95]">
+            {/* TÍTULO EN NEGRO PURO */}
+            <h1 className="text-5xl lg:text-7xl font-black text-black tracking-tighter leading-[0.95]">
                 Si se pierde,<br/>
                 <span className="text-[#ff6f00]">que vuelva rápido.</span>
             </h1>
@@ -66,7 +67,7 @@ export default function LandingPage() {
                 <input 
                     type="text" 
                     placeholder="Escribí el nombre de tu mascota..." 
-                    className="bg-transparent outline-none w-full text-gray-800 placeholder-gray-400 font-medium py-2"
+                    className="bg-transparent outline-none w-full text-black placeholder-gray-400 font-medium py-2" // INPUT TEXTO NEGRO
                     value={demoName}
                     onChange={(e) => setDemoName(e.target.value)}
                     maxLength={15}
@@ -92,7 +93,7 @@ export default function LandingPage() {
       <section id="como-funciona" className="py-24 bg-gray-50 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-                <h2 className="text-4xl font-black tracking-tighter mb-4 text-gray-900">¿Cómo funciona?</h2>
+                <h2 className="text-4xl font-black tracking-tighter mb-4 text-black">¿Cómo funciona?</h2>
                 <p className="text-gray-500 text-lg max-w-2xl mx-auto">
                     Olvidate de grabar chapitas que se borran. IamPaw es tecnología simple para un problema complejo.
                 </p>
@@ -102,7 +103,7 @@ export default function LandingPage() {
                 {/* Paso 1 */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 text-center hover:-translate-y-2 transition-transform duration-300">
                     <div className="w-16 h-16 bg-orange-100 text-[#ff6f00] rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl">📸</div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900">1. Escaneá</h3>
+                    <h3 className="text-xl font-bold mb-3 text-black">1. Escaneá</h3>
                     <p className="text-gray-500 leading-relaxed">
                         Recibís tu chapita, escaneás el código QR con tu celular y creás tu cuenta en segundos.
                     </p>
@@ -111,7 +112,7 @@ export default function LandingPage() {
                 {/* Paso 2 */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 text-center hover:-translate-y-2 transition-transform duration-300">
                     <div className="w-16 h-16 bg-orange-100 text-[#ff6f00] rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl">📝</div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900">2. Personalizá</h3>
+                    <h3 className="text-xl font-bold mb-3 text-black">2. Personalizá</h3>
                     <p className="text-gray-500 leading-relaxed">
                         Cargá la foto, datos médicos, teléfono y nombre. Podés actualizarlo cuando quieras.
                     </p>
@@ -120,7 +121,7 @@ export default function LandingPage() {
                 {/* Paso 3 */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 text-center hover:-translate-y-2 transition-transform duration-300">
                     <div className="w-16 h-16 bg-orange-100 text-[#ff6f00] rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl">🧡</div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900">3. Protegido</h3>
+                    <h3 className="text-xl font-bold mb-3 text-black">3. Protegido</h3>
                     <p className="text-gray-500 leading-relaxed">
                         Colgale la chapita. Si alguien lo encuentra, al escanear verá tu contacto y ubicación.
                     </p>
@@ -176,7 +177,8 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="bg-white py-12 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-xl font-black tracking-tighter">Iam<span className="text-[#ff6f00]">Paw</span>.</div>
+            {/* LOGO FOOTER NEGRO */}
+            <div className="text-xl font-black tracking-tighter text-black">Iam<span className="text-[#ff6f00]">Paw</span>.</div>
             <p className="text-gray-400 text-sm font-medium">
                 © 2026 IamPaw Argentina. Todos los derechos reservados.
             </p>
