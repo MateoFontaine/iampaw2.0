@@ -17,8 +17,10 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false, // ESTO BLOQUEA EL ZOOM
-  themeColor: '#ffffff', // Pinta la barrita de estado del celular de blanco
+  userScalable: false,
+  themeColor: '#ffffff',
+  // ESTA ES LA CLAVE MÁGICA:
+  viewportFit: 'cover', 
 };
 
 // --- 2. SEO MASTER CONFIG ---
