@@ -8,8 +8,8 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// ... (El componente ProfilePreviewScreen queda IGUAL, no lo toques) ...
-// PEGALO ACÁ SI LO BORRASTE, PERO ES EL MISMO DE ANTES
+// --- COMPONENTE PREVIEW (LOCAL) ---
+// (Este queda igual visualmente, ya que es sobre fondos oscuros o blancos limpios)
 const ProfilePreviewScreen = ({ data, photoUrl, edadCompleta }: { data: any, photoUrl: string | null, edadCompleta: string }) => {
     const [hora, setHora] = useState('9:41');
     useEffect(() => {
@@ -179,7 +179,7 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
           <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-xl p-8 text-center border border-gray-100 relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
             <div className="relative z-10 my-12">
-            <h1 className="text-5xl font-black tracking-tighter text-gray-900 mb-6 leading-none">Iam<span className="text-[#ff6f00]">Paw</span>.</h1>
+            <h1 className="text-5xl font-black tracking-tighter text-black mb-6 leading-none">Iam<span className="text-[#ff6f00]">Paw</span>.</h1>
              <p className="text-gray-600 font-medium">Gracias por tu compra.</p>
              <button onClick={() => setPaso('formulario')} className="mt-8 w-full bg-[#ff6f00] text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-orange-200 transition-all">Comenzar</button>
             </div>
@@ -194,20 +194,82 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
       {/* FORMULARIO */}
       <div className="bg-white w-full max-w-[400px] rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-up border border-gray-100 z-10">
         <div className="bg-white p-6 pb-4 text-center border-b border-gray-50">
-          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">Iam<span className="text-[#ff6f00]">Paw</span></h2>
+          <h2 className="text-2xl font-extrabold tracking-tight text-black">Iam<span className="text-[#ff6f00]">Paw</span></h2>
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2">ID: {codigo}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           
-          {/* ... Inputs de Mascota (Igual que antes) ... */}
+          {/* FOTO */}
           <div className="flex justify-center mb-4"><label className="relative cursor-pointer group"><input type="file" accept="image/*" className="hidden" onChange={handleFileChange} /><div className={`w-24 h-24 rounded-full border-4 flex items-center justify-center overflow-hidden bg-gray-50 transition-all ${previewUrl ? 'border-[#ff6f00] shadow-md' : 'border-gray-100 group-hover:border-orange-200'}`}>{previewUrl ? <img src={previewUrl} className="w-full h-full object-cover" /> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300 mb-1"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>}</div></label></div>
-          <div className="relative group"><input type="text" name="nombre" required className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" placeholder="Nombre Mascota" onChange={handleChange} /></div>
-          <div className="relative group"><input type="text" name="raza" className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" placeholder="Raza" onChange={handleChange} /></div>
-          <div className="flex gap-3"><div className="w-1/4"><input type="number" value={edadNum} onChange={(e) => setEdadNum(e.target.value)} className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium placeholder-gray-400" placeholder="0" /></div><div className="w-1/3"><select value={edadUnidad} onChange={(e) => setEdadUnidad(e.target.value)} className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none"><option>Años</option><option>Meses</option></select></div><div className="w-full"><select name="genero" className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none text-gray-500 valid:text-gray-900" onChange={handleChange} required defaultValue=""><option value="" disabled>Sexo</option><option>Macho</option><option>Hembra</option></select></div></div>
-          <div className="relative group"><div className="absolute left-4 top-3.5 flex items-center gap-2 pointer-events-none"><span className="text-lg">🇦🇷</span><span className="text-gray-400 font-bold text-sm tracking-tight">+54 9</span><div className="h-4 w-px bg-gray-300 ml-1"></div></div><input type="tel" name="telefono" required className="w-full pl-28 pr-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" placeholder="11 1234 5678" onChange={handleChange} /></div>
-          <div className="relative group"><input type="text" name="nombre_dueño" required className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium placeholder-gray-400" placeholder="Tu Nombre" onChange={handleChange} /></div>
-          <div className="relative group"><textarea name="descripcion" className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium h-16 resize-none placeholder-gray-400" placeholder="Datos Extra..." onChange={handleChange} /></div>
+          
+          {/* NOMBRE */}
+          <div className="relative group">
+            <input 
+                type="text" name="nombre" required 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                placeholder="Nombre Mascota" onChange={handleChange} 
+            />
+          </div>
+          
+          {/* RAZA */}
+          <div className="relative group">
+            <input 
+                type="text" name="raza" 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                placeholder="Raza" onChange={handleChange} 
+            />
+          </div>
+          
+          {/* EDAD Y SEXO */}
+          <div className="flex gap-3">
+            <div className="w-1/4">
+                <input 
+                    type="number" value={edadNum} onChange={(e) => setEdadNum(e.target.value)} 
+                    className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium text-black placeholder-gray-400" 
+                    placeholder="0" 
+                />
+            </div>
+            <div className="w-1/3">
+                <select value={edadUnidad} onChange={(e) => setEdadUnidad(e.target.value)} className="w-full text-center py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none text-black">
+                    <option>Años</option><option>Meses</option>
+                </select>
+            </div>
+            <div className="w-full">
+                <select name="genero" className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium appearance-none text-black" onChange={handleChange} required defaultValue="">
+                    <option value="" disabled>Sexo</option>
+                    <option>Macho</option><option>Hembra</option>
+                </select>
+            </div>
+          </div>
+          
+          {/* TELEFONO */}
+          <div className="relative group">
+            <div className="absolute left-4 top-3.5 flex items-center gap-2 pointer-events-none"><span className="text-lg">🇦🇷</span><span className="text-gray-400 font-bold text-sm tracking-tight">+54 9</span><div className="h-4 w-px bg-gray-300 ml-1"></div></div>
+            <input 
+                type="tel" name="telefono" required 
+                className="w-full pl-28 pr-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                placeholder="11 1234 5678" onChange={handleChange} 
+            />
+          </div>
+          
+          {/* DUEÑO */}
+          <div className="relative group">
+            <input 
+                type="text" name="nombre_dueño" required 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 transition-all font-medium text-black placeholder-gray-400" 
+                placeholder="Tu Nombre" onChange={handleChange} 
+            />
+          </div>
+          
+          {/* DESCRIPCION */}
+          <div className="relative group">
+            <textarea 
+                name="descripcion" 
+                className="w-full px-4 py-3 bg-gray-50 rounded-xl outline-none font-medium h-16 resize-none text-black placeholder-gray-400" 
+                placeholder="Datos Extra..." onChange={handleChange} 
+            />
+          </div>
 
           <div className="h-px bg-gray-100 my-4"></div>
 
@@ -220,7 +282,7 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required 
-                    className="w-full px-4 py-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-200 transition-all font-medium placeholder-gray-400" 
+                    className="w-full px-4 py-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-200 transition-all font-medium text-black placeholder-gray-400" 
                     placeholder="Tu Email" 
                 />
              </div>
@@ -230,7 +292,7 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required 
-                    className="w-full px-4 py-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-200 transition-all font-medium placeholder-gray-400" 
+                    className="w-full px-4 py-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-200 transition-all font-medium text-black placeholder-gray-400" 
                     placeholder="Crear Contraseña" 
                 />
              </div>
