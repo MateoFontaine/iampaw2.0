@@ -43,6 +43,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Mateo Fontaine", url: "https://mateofontaine.com" }],
   creator: "Mateo Fontaine",
 
+  // --- CONFIGURACIÓN APPLE (LO QUE FALTABA) ---
+  appleWebApp: {
+    capable: true, // Habilita modo pantalla completa real
+    statusBarStyle: "default", // Pinta la barra de estado blanca (letras negras)
+    title: "IamPaw",
+  },
+  // --------------------------------------------
+
   // ROBOTS
   robots: {
     index: true,
