@@ -1,0 +1,15 @@
+name: Mantener Proyecto Vivo
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Todos los días a las 9 AM
+  workflow_dispatch:
+
+jobs:
+  ping-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Despertar IamPaw
+        run: |
+          # Le pegamos al perfil 'PING' para forzar una lectura en la base de datos
+          curl -I https://iampaw.vercel.app/p/PING
