@@ -1,16 +1,32 @@
+// 1. Cargar variables de entorno (Lee tu archivo .env.local)
+require('dotenv').config({ path: '.env.local' });
+
 const QRCode = require('qrcode');
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');
 
 // --- CONFIGURACIÓN ---
-const CANTIDAD = 10; // ¿Cuántos QRs querés crear hoy?
-const DOMINIO = 'http://localhost:3000'; // Ojo: CAMIAR A DOMINIO ORIGNAL 
-const SUPABASE_URL = 'https://hlfjzvgaehoynadxgtwh.supabase.co'; // Pegá lo mismo que pusiste en .env.local
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZmp6dmdhZWhveW5hZHhndHdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTE4MDkxNiwiZXhwIjoyMDg0NzU2OTE2fQ.O7e-znWgwwuni_Rd26ibcrvxiZb_4gNPzLaBP4DcpGM'; // Pegá la KEY anon que pusiste en .env.local
+const CANTIDAD = 10; 
+// Usamos una variable de entorno para el dominio, o un fallback por si no existe
+const DOMINIO = process.env.NEXT_PUBLIC_SITE_URL || 'https://iampaw.vercel.app'; 
+
+// --- SEGURIDAD: LEER CLAVES DEL ENV ---
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+// IMPORTANTE: Para scripts de administración como este, a veces se necesita 
+// la "SERVICE_ROLE_KEY" si la tabla tiene seguridad (RLS). 
+// Si te falla con la ANON KEY, agregá la SERVICE a tu .env.local y usala acá.
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY; 
+
+// Validamos que las claves existan antes de arrancar
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ ERROR CRÍTICO: No se encontraron las claves de Supabase.');
+  console.error('Asegurate de tener el archivo .env.local con NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  process.exit(1);
+}
 // ---------------------
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Función para crear un código aleatorio de 6 caracteres (ej: A4X9P2)
 function generarCodigo() {
@@ -30,6 +46,7 @@ async function generarLote() {
   }
 
   console.log(`🚀 Generando ${CANTIDAD} chapitas...`);
+  console.log(`🔗 Usando dominio: ${DOMINIO}`);
 
   for (let i = 0; i < CANTIDAD; i++) {
     const codigo = generarCodigo();
@@ -42,7 +59,9 @@ async function generarLote() {
 
     if (error) {
       console.error(`❌ Error guardando ${codigo}:`, error.message);
-      continue; // Si falla (ej: código repetido), salta al siguiente
+      // Si el error es por código duplicado, restamos 1 al iterador para intentar de nuevo
+      if (error.code === '23505') i--; 
+      continue; 
     }
 
     // 2. Generar la imagen del QR
