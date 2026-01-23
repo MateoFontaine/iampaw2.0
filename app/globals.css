@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  /* Forzamos colores claros siempre para evitar bordes negros */
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -12,15 +13,23 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ELIMINÉ EL MEDIA QUERY DARK MODE PARA QUE NO TE ARRUINE EL FONDO EN MÓVIL */
 
+html,
 body {
-  background: var(--background);
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  
+  /* Esto usa tu variable blanca y evita el fondo negro elástico */
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+
+  /* --- BLINDAJE PARA MÓVIL (APP FEEL) --- */
+  overflow-x: hidden; /* Prohíbe scroll lateral */
+  touch-action: pan-y; /* Solo permite scroll vertical */
+  -webkit-tap-highlight-color: transparent; /* Saca el flash azul al tocar */
+  -webkit-font-smoothing: antialiased; /* Texto nítido */
 }

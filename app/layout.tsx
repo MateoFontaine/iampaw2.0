@@ -17,10 +17,9 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false,
-  themeColor: '#ffffff',
-  // ESTA ES LA CLAVE MÁGICA:
-  viewportFit: 'cover', 
+  userScalable: false,   // Bloquea el zoom
+  viewportFit: 'cover',  // CLAVE: Elimina los bordes negros (ocupa el 100% real)
+  themeColor: '#ffffff', // Pinta la barra de estado de blanco
 };
 
 // --- 2. SEO MASTER CONFIG ---

@@ -2,10 +2,9 @@
 import { useState } from 'react';
 import PhoneMockup from '@/components/PhoneMockup';
 
-export default function LandingPage() {
+export default function LandingClient() {
   const [demoName, setDemoName] = useState('');
 
-  // Datos para la preview
   const defaultData = {
     nombre: demoName || "Apollo",
     raza: "Golden Retriever",
@@ -24,12 +23,12 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-orange-100 selection:text-orange-600">
+    // AGREGADO: overflow-x-hidden acá para cortar cualquier cosa que se salga del ancho
+    <div className="min-h-screen bg-white font-sans selection:bg-orange-100 selection:text-orange-600 overflow-x-hidden w-full relative">
       
       {/* NAVBAR */}
       <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all">
           <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-            {/* LOGO: Iam en NEGRO PURO */}
             <div className="text-2xl font-black tracking-tighter cursor-pointer text-black" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
                 Iam<span className="text-[#ff6f00]">Paw</span>.
             </div>
@@ -45,14 +44,14 @@ export default function LandingPage() {
       </nav>
 
       {/* --- HERO SECTION --- */}
-      <main className="pt-28 pb-20 lg:pt-32 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16">
+      <main className="pt-28 pb-20 lg:pt-32 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16 overflow-hidden"> 
+        {/* Agregué overflow-hidden al main también por si el celular rota mucho */}
         
         {/* TEXTO */}
-        <div className="flex-1 text-center lg:text-left space-y-8 animate-slide-up">
+        <div className="flex-1 text-center lg:text-left space-y-8 animate-slide-up relative z-10">
             <div className="inline-block bg-orange-50 border border-orange-100 text-[#ff6f00] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
                 🚀 La evolución de la chapita
             </div>
-            {/* TÍTULO EN NEGRO PURO */}
             <h1 className="text-5xl lg:text-7xl font-black text-black tracking-tighter leading-[0.95]">
                 Si se pierde,<br/>
                 <span className="text-[#ff6f00]">que vuelva rápido.</span>
@@ -62,12 +61,11 @@ export default function LandingPage() {
                 Solo escaneá el QR y contactá al dueño al instante por WhatsApp.
             </p>
 
-            {/* DEMO INPUT */}
             <div className="bg-gray-50 p-2 pl-6 rounded-full border border-gray-200 flex flex-col sm:flex-row items-center gap-2 max-w-md mx-auto lg:mx-0 shadow-sm focus-within:ring-2 focus-within:ring-[#ff6f00] focus-within:border-transparent transition-all">
                 <input 
                     type="text" 
                     placeholder="Escribí el nombre de tu mascota..." 
-                    className="bg-transparent outline-none w-full text-black placeholder-gray-400 font-medium py-2" // INPUT TEXTO NEGRO
+                    className="bg-transparent outline-none w-full text-black placeholder-gray-400 font-medium py-2"
                     value={demoName}
                     onChange={(e) => setDemoName(e.target.value)}
                     maxLength={15}
@@ -81,13 +79,13 @@ export default function LandingPage() {
 
         {/* CELULAR */}
         <div className="flex-1 flex justify-center lg:justify-end relative">
+            {/* Esta luz de fondo causaba scroll horizontal si no recortamos el padre */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-orange-100 rounded-full blur-3xl opacity-50 -z-10 pointer-events-none"></div>
             <div className="rotate-[-2deg] hover:rotate-0 transition-transform duration-500 transform origin-center">
                 <PhoneMockup data={defaultData} photoUrl={demoPhoto} />
             </div>
         </div>
       </main>
-
 
       {/* --- SECCIÓN CÓMO FUNCIONA --- */}
       <section id="como-funciona" className="py-24 bg-gray-50 border-t border-gray-100">
@@ -100,7 +98,6 @@ export default function LandingPage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-                {/* Paso 1 */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 text-center hover:-translate-y-2 transition-transform duration-300">
                     <div className="w-16 h-16 bg-orange-100 text-[#ff6f00] rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl">📸</div>
                     <h3 className="text-xl font-bold mb-3 text-black">1. Escaneá</h3>
@@ -108,8 +105,6 @@ export default function LandingPage() {
                         Recibís tu chapita, escaneás el código QR con tu celular y creás tu cuenta en segundos.
                     </p>
                 </div>
-
-                {/* Paso 2 */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 text-center hover:-translate-y-2 transition-transform duration-300">
                     <div className="w-16 h-16 bg-orange-100 text-[#ff6f00] rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl">📝</div>
                     <h3 className="text-xl font-bold mb-3 text-black">2. Personalizá</h3>
@@ -117,8 +112,6 @@ export default function LandingPage() {
                         Cargá la foto, datos médicos, teléfono y nombre. Podés actualizarlo cuando quieras.
                     </p>
                 </div>
-
-                {/* Paso 3 */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 text-center hover:-translate-y-2 transition-transform duration-300">
                     <div className="w-16 h-16 bg-orange-100 text-[#ff6f00] rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl">🧡</div>
                     <h3 className="text-xl font-bold mb-3 text-black">3. Protegido</h3>
@@ -130,10 +123,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-
       {/* --- SECCIÓN COMPRA / CTA --- */}
       <section id="comprar" className="py-24 bg-black text-white relative overflow-hidden">
-         {/* Decoración fondo */}
+         {/* Estas luces también causaban el problema, ahora el overflow-x-hidden del div padre las corta */}
          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#ff6f00] rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-white rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
@@ -165,9 +157,7 @@ export default function LandingPage() {
                 >
                     Soy veterinaria / revendedor
                 </a>
-              
             </div>
-
             <p className="mt-8 text-sm text-gray-500">
                 📦 Envíos a todo el país (Argentina) • 🔒 Pago seguro
             </p>
@@ -177,7 +167,6 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="bg-white py-12 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            {/* LOGO FOOTER NEGRO */}
             <div className="text-xl font-black tracking-tighter text-black">Iam<span className="text-[#ff6f00]">Paw</span>.</div>
             <p className="text-gray-400 text-sm font-medium">
                 © 2026 IamPaw Argentina. Todos los derechos reservados.
