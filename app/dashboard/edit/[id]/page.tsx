@@ -189,7 +189,7 @@ export default function EditMascotaPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8">
+    <div className=" font-sans min-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8">
       {/* SKELETON */}
       <div className="bg-white w-full max-w-[420px] rounded-[2.5rem] shadow-xl border border-gray-100 p-6 space-y-6 animate-pulse">
           <div className="flex justify-between items-center pb-4 border-b border-gray-50">
@@ -219,7 +219,7 @@ export default function EditMascotaPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8 transition-all duration-500">
+    <div  className=" font-sans min-h-screen bg-gray-100 flex justify-center items-center p-4 lg:gap-16 lg:p-8 transition-all duration-500">
       
       {/* --- COLUMNA IZQUIERDA: EL FORMULARIO --- */}
       <div className="bg-white w-full max-w-[420px] rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 z-10 animate-slide-up">

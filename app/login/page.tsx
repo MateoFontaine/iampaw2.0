@@ -29,7 +29,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className=" font-sans min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-xl p-8 border border-gray-100">
             <div className="text-center mb-8">
                 {/* Título en NEGRO PURO */}
