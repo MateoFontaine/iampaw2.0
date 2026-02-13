@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import PhoneMockup from '@/components/PhoneMockup';
+import Link from 'next/link';
 
 export default function LandingClient() {
   const [demoName, setDemoName] = useState('');
@@ -27,21 +28,41 @@ export default function LandingClient() {
     <div className="min-h-screen bg-white font-sans selection:bg-orange-100 selection:text-orange-600 overflow-x-hidden w-full relative">
       
       {/* NAVBAR */}
-      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all">
-          <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-            <div className="text-2xl font-black tracking-tighter cursor-pointer text-black" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-                Iam<span className="text-[#ff6f00]">Paw</span>.
-            </div>
-            <div className="flex gap-6 items-center">
-                <button onClick={() => scrollToSection('como-funciona')} className="hidden sm:block text-sm font-bold text-gray-500 hover:text-black transition">
-                    Cómo funciona
-                </button>
-                <button onClick={() => scrollToSection('comprar')} className="bg-black text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[#ff6f00] transition-colors shadow-lg shadow-gray-200">
-                    Conseguir Chapita
-                </button>
-            </div>
-          </div>
-      </nav>
+<nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 transition-all">
+  <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+    
+    {/* LOGO */}
+    <div className="text-2xl font-black tracking-tighter cursor-pointer text-black" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+        Iam<span className="text-[#ff6f00]">Paw</span>.
+    </div>
+
+    {/* MENU DERECHA */}
+    <div className="flex gap-4 sm:gap-6 items-center">
+        
+        {/* Link 1: Cómo funciona (Oculto en móvil) */}
+        <button onClick={() => scrollToSection('como-funciona')} className="hidden md:block text-sm font-bold text-gray-500 hover:text-black transition">
+            Cómo funciona
+        </button>
+
+        {/* --- NUEVO BTN LOGIN --- */}
+        {/* Opción A: Texto simple (Más limpio) */}
+        <Link href="/login" className="text-sm font-bold text-gray-900 hover:text-[#ff6f00] transition-colors">
+            Ingresar
+        </Link>
+
+        {/* Opción B: Con borde (Si querés que resalte un poquito más)
+        <Link href="/login" className="px-4 py-2 text-sm font-bold text-gray-900 border border-gray-200 rounded-full hover:border-[#ff6f00] hover:text-[#ff6f00] transition-all">
+            Soy Dueño
+        </Link> 
+        */}
+
+        {/* CTA PRINCIPAL */}
+        <button onClick={() => scrollToSection('comprar')} className="bg-black text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-[#ff6f00] transition-colors shadow-lg shadow-gray-200">
+            Conseguir Chapita
+        </button>
+    </div>
+  </div>
+</nav>
 
       {/* --- HERO SECTION --- */}
       <main className="pt-28 pb-20 lg:pt-32 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16 overflow-hidden"> 
