@@ -1,83 +1,103 @@
-// 1. Cargar variables de entorno (Lee tu archivo .env.local)
-require('dotenv').config({ path: '.env.local' });
+const path = require('path');
+// Carga las variables desde el archivo .env.local en la carpeta raíz
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
+
+// --- PARCHE DE CONEXIÓN (Para que no falle en Windows/Node 24) ---
+const fetch = require('node-fetch');
+const dns = require('dns');
+if (dns.setDefaultResultOrder) dns.setDefaultResultOrder('ipv4first');
+// ------------------------------------------------------------------
 
 const QRCode = require('qrcode');
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
-const path = require('path');
 
-// --- CONFIGURACIÓN ---
-const CANTIDAD = 10; 
-// Usamos una variable de entorno para el dominio, o un fallback por si no existe
+// --- CONFIGURACIÓN DEL LOTE ---
+const CANTIDAD = 20;  // Cantidad de chapitas a generar
+const PREFIJO = 'A';  // Letra del lote (A, B, C...)
 const DOMINIO = process.env.NEXT_PUBLIC_SITE_URL || 'https://iampaw.vercel.app'; 
 
-// --- SEGURIDAD: LEER CLAVES DEL ENV ---
+// --- SEGURIDAD ---
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-// IMPORTANTE: Para scripts de administración como este, a veces se necesita 
-// la "SERVICE_ROLE_KEY" si la tabla tiene seguridad (RLS). 
-// Si te falla con la ANON KEY, agregá la SERVICE a tu .env.local y usala acá.
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY; 
+// ¡IMPORTANTE! Usamos la Service Role Key para tener permiso de escritura
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Validamos que las claves existan antes de arrancar
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ ERROR CRÍTICO: No se encontraron las claves de Supabase.');
-  console.error('Asegurate de tener el archivo .env.local con NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  console.error('❌ ERROR: Faltan las claves en .env.local');
+  console.error('Asegurate de tener SUPABASE_SERVICE_ROLE_KEY definida.');
   process.exit(1);
 }
-// ---------------------
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Inicializamos Supabase con fetch personalizado
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: { persistSession: false },
+  global: { fetch: fetch }
+});
 
-// Función para crear un código aleatorio de 6 caracteres (ej: A4X9P2)
+// Función modificada: PREFIJO + 5 Caracteres Random
 function generarCodigo() {
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let resultado = '';
-  for (let i = 0; i < 6; i++) {
-    resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  let randomPart = '';
+  // Generamos solo 5 caracteres porque el 6to es el prefijo
+  for (let i = 0; i < 5; i++) {
+    randomPart += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
   }
-  return resultado;
+  return `${PREFIJO}${randomPart}`; // Ej: A + X9P2Z = AX9P2Z
 }
 
 async function generarLote() {
-  // Crear carpeta para guardar las imágenes si no existe
-  const dir = './qrs_para_laser';
-  if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir);
+  const dir = path.join(__dirname, 'qrs_para_laser');
+  
+  // Crear carpeta si no existe
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
+  // Limpiar imágenes viejas de la carpeta
+  const archivosViejos = fs.readdirSync(dir);
+  for (const archivo of archivosViejos) {
+    fs.unlinkSync(path.join(dir, archivo));
   }
 
-  console.log(`🚀 Generando ${CANTIDAD} chapitas...`);
-  console.log(`🔗 Usando dominio: ${DOMINIO}`);
+  console.log(`🚀 Generando Lote "${PREFIJO}" (${CANTIDAD} chapitas)...`);
+  console.log(`🔗 Dominio: ${DOMINIO}`);
 
-  for (let i = 0; i < CANTIDAD; i++) {
+  let creados = 0;
+
+  while (creados < CANTIDAD) {
     const codigo = generarCodigo();
-    const urlFinal = `${DOMINIO}/p/${codigo}`; // Esto es lo que lee el celular
+    const urlFinal = `${DOMINIO}/p/${codigo}`;
 
     // 1. Guardar en Supabase
     const { error } = await supabase
       .from('chapitas')
-      .insert([{ codigo: codigo, estado: 'disponible' }]);
+      .insert([
+        { 
+          codigo: codigo, 
+          estado: 'disponible',
+          mascota_id: null 
+        }
+      ]);
 
     if (error) {
-      console.error(`❌ Error guardando ${codigo}:`, error.message);
-      // Si el error es por código duplicado, restamos 1 al iterador para intentar de nuevo
-      if (error.code === '23505') i--; 
-      continue; 
+      console.error(`❌ Error con ${codigo}:`, error.message);
+      // Si el error es de permisos (RLS), cortamos todo
+      if (error.message.includes('row-level security')) {
+        console.error("🛑 STOP: La clave SUPABASE_SERVICE_ROLE_KEY no tiene permisos o es incorrecta.");
+        process.exit(1);
+      }
+      continue; // Si es duplicado, intenta otro
     }
 
-    // 2. Generar la imagen del QR
-    const archivoImagen = path.join(dir, `${codigo}.png`);
-    await QRCode.toFile(archivoImagen, urlFinal, {
-      color: {
-        dark: '#000000',  // Puntos negros
-        light: '#ffffff'  // Fondo blanco
-      },
-      width: 500 // Tamaño de la imagen
+    // 2. Generar QR
+    await QRCode.toFile(path.join(dir, `${codigo}.png`), urlFinal, {
+      width: 500, margin: 1,
+      color: { dark: '#000000', light: '#ffffff' }
     });
 
-    console.log(`✅ [${i+1}/${CANTIDAD}] Creado: ${codigo}`);
+    creados++;
+    console.log(`✅ [${creados}/${CANTIDAD}] ${codigo}`);
   }
 
-  console.log(`\n✨ ¡Listo! Revisá la carpeta "${dir}"`);
+  console.log(`\n✨ ¡LISTO! Revisá la carpeta: ${dir}`);
 }
 
 generarLote();
