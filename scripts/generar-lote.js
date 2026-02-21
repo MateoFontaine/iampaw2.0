@@ -15,11 +15,12 @@ const fs = require('fs');
 // --- CONFIGURACIÓN DEL LOTE ---
 const CANTIDAD = 20;  // Cantidad de chapitas a generar
 const PREFIJO = 'A';  // Letra del lote (A, B, C...)
-const DOMINIO = process.env.NEXT_PUBLIC_SITE_URL || 'https://iampaw.vercel.app'; 
+
+// 🔥 CAMBIO CLAVE: Ponemos el dominio oficial directo aquí
+const DOMINIO = 'https://www.iampaw.com.ar'; 
 
 // --- SEGURIDAD ---
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-// ¡IMPORTANTE! Usamos la Service Role Key para tener permiso de escritura
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
@@ -38,11 +39,10 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 function generarCodigo() {
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let randomPart = '';
-  // Generamos solo 5 caracteres porque el 6to es el prefijo
   for (let i = 0; i < 5; i++) {
     randomPart += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
   }
-  return `${PREFIJO}${randomPart}`; // Ej: A + X9P2Z = AX9P2Z
+  return `${PREFIJO}${randomPart}`; 
 }
 
 async function generarLote() {
@@ -58,13 +58,14 @@ async function generarLote() {
   }
 
   console.log(`🚀 Generando Lote "${PREFIJO}" (${CANTIDAD} chapitas)...`);
-  console.log(`🔗 Dominio: ${DOMINIO}`);
+  console.log(`🔗 Dominio oficial: ${DOMINIO}`);
 
   let creados = 0;
 
   while (creados < CANTIDAD) {
     const codigo = generarCodigo();
-    const urlFinal = `${DOMINIO}/p/${codigo}`;
+    // Esto generará algo como: https://www.iampaw.com.ar/p/A1B2C3
+    const urlFinal = `${DOMINIO}/p/${codigo}`; 
 
     // 1. Guardar en Supabase
     const { error } = await supabase
@@ -79,12 +80,11 @@ async function generarLote() {
 
     if (error) {
       console.error(`❌ Error con ${codigo}:`, error.message);
-      // Si el error es de permisos (RLS), cortamos todo
       if (error.message.includes('row-level security')) {
         console.error("🛑 STOP: La clave SUPABASE_SERVICE_ROLE_KEY no tiene permisos o es incorrecta.");
         process.exit(1);
       }
-      continue; // Si es duplicado, intenta otro
+      continue; 
     }
 
     // 2. Generar QR

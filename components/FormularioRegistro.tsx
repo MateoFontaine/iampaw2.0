@@ -2,14 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import dynamic from 'next/dynamic'; // <--- 1. IMPORTAMOS DYNAMIC
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// --- 2. CARGA DINÁMICA DEL MAPA (Para evitar errores de SSR) ---
+const MapaPicker = dynamic(() => import('@/components/MapaPicker'), { 
+  ssr: false, 
+  loading: () => <div className="h-64 bg-gray-50 rounded-2xl animate-pulse flex items-center justify-center text-gray-400 text-sm font-medium">Cargando mapa...</div>
+});
+
 // --- COMPONENTE PREVIEW (LOCAL) ---
-// (Este queda igual visualmente, ya que es sobre fondos oscuros o blancos limpios)
 const ProfilePreviewScreen = ({ data, photoUrl, edadCompleta }: { data: any, photoUrl: string | null, edadCompleta: string }) => {
     const [hora, setHora] = useState('9:41');
     useEffect(() => {
@@ -68,9 +74,13 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
   const [edadNum, setEdadNum] = useState('');
   const [edadUnidad, setEdadUnidad] = useState('Años'); 
 
-  // NUEVOS ESTADOS PARA AUTH
+  // ESTADOS PARA AUTH
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // --- 3. NUEVOS ESTADOS PARA UBICACIÓN ---
+  const [usaUbicacion, setUsaUbicacion] = useState(false);
+  const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null);
 
   const [formData, setFormData] = useState({
     nombre: '', raza: '', genero: '', telefono: '', descripcion: '', nombre_dueño: ''
@@ -120,17 +130,13 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
             });
 
             if (signInError) {
-                // Si falla acá, es porque puso mal la contraseña de su cuenta existente
                 throw new Error("Ya existe una cuenta con este email, pero la contraseña es incorrecta.");
             }
-            // Logueo exitoso, usamos este ID
             userId = signInData.user.id;
         } else {
-            // Si fue otro error (ej: contraseña corta), lo tiramos
             throw signUpError;
         }
       } else {
-        // Creación exitosa
         userId = signUpData.user?.id;
       }
 
@@ -145,7 +151,7 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
         publicUrl = urlData.publicUrl;
       }
 
-      // 4. GUARDAR MASCOTA (Asignada al userId recuperado)
+      // 4. GUARDAR MASCOTA (CON UBICACIÓN AHORA)
       const { data: nuevaMascota, error: errorMascota } = await supabase.from('mascotas').insert([{
             nombre: formData.nombre, 
             raza: formData.raza, 
@@ -155,7 +161,10 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
             descripcion: formData.descripcion, 
             nombre_dueño: formData.nombre_dueño, 
             foto_url: publicUrl,
-            user_id: userId // <--- IMPORTANTE
+            user_id: userId,
+            // --- 4. GUARDAMOS COORDENADAS SI ESTÁN ACTIVAS ---
+            lat: usaUbicacion ? coords?.lat : null,
+            lng: usaUbicacion ? coords?.lng : null
         }]).select().single();
 
       if (errorMascota) throw errorMascota;
@@ -164,7 +173,6 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
       const { error: errorChapita } = await supabase.from('chapitas').update({ mascota_id: nuevaMascota.id, estado: 'activa' }).eq('codigo', codigo);
       if (errorChapita) throw errorChapita;
 
-      // REDIRIGIR AL DASHBOARD (Para que vea sus 2 mascotas)
       window.location.href = '/dashboard';
 
     } catch (error: any) { 
@@ -271,9 +279,44 @@ export default function FormularioRegistro({ codigo }: { codigo: string }) {
             />
           </div>
 
+          {/* --- 5. UI DEL MAPA (Integrada en el diseño) --- */}
+          <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-blue-100 p-2 rounded-full text-blue-600 text-sm">
+                            🗺️
+                        </div>
+                        <div>
+                            <p className="font-bold text-sm text-gray-900">Ubicación (Casa)</p>
+                            <p className="text-[10px] text-gray-500 font-bold">OPCIONAL</p>
+                        </div>
+                    </div>
+                    
+                    {/* Switch Toggle */}
+                    <button
+                        type="button"
+                        onClick={() => setUsaUbicacion(!usaUbicacion)}
+                        className={`w-11 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out ${usaUbicacion ? 'bg-[#ff6f00]' : 'bg-gray-300'}`}
+                    >
+                        <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ${usaUbicacion ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                </div>
+
+                {/* Contenedor del Mapa (Animado) */}
+                {usaUbicacion && (
+                    <div className="animate-in fade-in slide-in-from-top-2 duration-300 pt-2">
+                        <MapaPicker 
+                            lat={coords?.lat} 
+                            lng={coords?.lng} 
+                            onChange={(lat: number, lng: number) => setCoords({ lat, lng })} 
+                        />
+                    </div>
+                )}
+            </div>
+
           <div className="h-px bg-gray-100 my-4"></div>
 
-          {/* --- NUEVA SECCIÓN DE CUENTA --- */}
+          {/* --- SECCIÓN DE CUENTA --- */}
           <div className="space-y-3 bg-orange-50 p-4 rounded-2xl border border-orange-100">
              <h3 className="text-xs font-bold text-[#ff6f00] uppercase tracking-wider mb-2">Crear Cuenta (Para editar después)</h3>
              <div className="relative group">
