@@ -42,7 +42,8 @@ export default function ActualizarPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] flex flex-col justify-center items-center p-6">
+    // ✅ COMO TIENE QUE QUEDAR
+<div className="min-h-screen bg-[#F9FAFB] flex flex-col justify-center items-center p-6 font-sans">
       <div className="w-full max-w-md bg-white rounded-[2rem] shadow-xl p-8 border border-gray-100">
         
         {exito ? (
