@@ -18,7 +18,6 @@ import {
   Map as MapIcon 
 } from 'lucide-react';
 
-// --- IMPORTAMOS EL MAPA DINÁMICAMENTE (Para evitar errores de servidor) ---
 const MapaComunitario = dynamic(() => import('@/components/MapaComunitario'), { 
   ssr: false, 
   loading: () => <div className="h-96 w-full bg-gray-100 rounded-[2.5rem] animate-pulse flex items-center justify-center text-gray-400 font-bold">Cargando Mapa de la Red...</div>
@@ -36,7 +35,6 @@ export default function Dashboard() {
   const [userEmail, setUserEmail] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
   
-  // ESTADOS DE NAVEGACIÓN
   const [activeTab, setActiveTab] = useState('mascotas'); 
   const [vistaAlertas, setVistaAlertas] = useState<'lista' | 'mapa'>('lista');
 
@@ -48,14 +46,12 @@ export default function Dashboard() {
       setUserEmail(user.email || '');
       setUserId(user.id);
 
-      // 1. TRAER MIS MASCOTAS
       const { data: misData } = await supabase
         .from('mascotas')
         .select('*, chapitas(codigo)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      // 2. TRAER TODAS LAS MASCOTAS PERDIDAS (COMUNIDAD)
       const { data: globalData } = await supabase
         .from('mascotas')
         .select('*, chapitas(codigo)')
@@ -70,13 +66,8 @@ export default function Dashboard() {
   }, []);
 
   const togglePerdido = async (id: string, estadoActual: boolean) => {
-    // Actualizamos localmente para rapidez visual
     setMisMascotas(prev => prev.map(m => m.id === id ? { ...m, perdido: !estadoActual } : m));
-    
-    // Actualizamos en BD
     await supabase.from('mascotas').update({ perdido: !estadoActual }).eq('id', id);
-    
-    // Recargamos la lista global para que aparezca/desaparezca del mapa
     const { data } = await supabase.from('mascotas').select('*, chapitas(codigo)').eq('perdido', true);
     if(data) setAlertasComunitarias(data);
   };
@@ -92,7 +83,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex font-sans text-gray-900">
       
-      {/* --- SIDEBAR (PC) --- */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-100 fixed h-full z-20">
         <div className="p-8">
            <h1 className="text-xl font-bold tracking-tight text-black">Iam<span className="text-[#ff6f00]">Paw</span>.</h1>
@@ -130,10 +120,8 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      {/* --- CONTENIDO PRINCIPAL --- */}
       <main className="flex-1 md:ml-64 min-h-screen pb-24 md:pb-10">
         
-        {/* HEADER MÓVIL */}
         <header className="md:hidden bg-white/90 backdrop-blur-sm sticky top-0 z-10 px-6 py-4 flex justify-between items-center border-b border-gray-100">
             <div className="text-lg font-bold tracking-tight">
                 {activeTab === 'mascotas' ? 'Mis Mascotas' : activeTab === 'alertas' ? 'Red de Alertas' : 'Perfil'}
@@ -143,7 +131,6 @@ export default function Dashboard() {
 
         <div className="p-6 max-w-5xl mx-auto">
             
-            {/* --- VISTA: MIS MASCOTAS --- */}
             {activeTab === 'mascotas' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
                     {misMascotas.length === 0 && (
@@ -184,7 +171,6 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {/* --- VISTA: ALERTAS COMUNITARIAS --- */}
             {activeTab === 'alertas' && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="mb-6 mt-2 md:mt-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -195,7 +181,6 @@ export default function Dashboard() {
                             <p className="text-gray-500 text-sm font-medium">Mascotas buscando su hogar en este momento.</p>
                         </div>
 
-                        {/* INTERRUPTOR LISTA / MAPA */}
                         <div className="bg-gray-100 p-1 rounded-xl flex self-start">
                             <button 
                                 onClick={() => setVistaAlertas('lista')}
@@ -220,7 +205,6 @@ export default function Dashboard() {
                         </div>
                     ) : (
                         <>
-                            {/* --- MODO LISTA --- */}
                             {vistaAlertas === 'lista' && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {alertasComunitarias.map((pet) => {
@@ -258,15 +242,14 @@ export default function Dashboard() {
                                 </div>
                             )}
 
-                            {/* --- MODO MAPA --- */}
                             {vistaAlertas === 'mapa' && (
                                 <div className="h-[500px] w-full rounded-[2.5rem] overflow-hidden border-2 border-gray-200 shadow-xl relative animate-in zoom-in-95 duration-300">
-                                    <MapaComunitario mascotas={alertasComunitarias} userId={userId} />
+                                    {/* ACÁ ESTABA EL ERROR: LE SAQUÉ EL userId={userId} */}
+                                    <MapaComunitario mascotas={alertasComunitarias} />
                                     
-                                    {/* Leyenda flotante */}
-                                    <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-2 rounded-xl text-[10px] font-bold shadow-sm z-[1000] flex flex-col gap-1">
-                                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-red-500"></div>Comunidad</div>
-                                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-orange-500"></div>Mis Mascotas</div>
+                                    {/* Leyenda flotante actualizada */}
+                                    <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-2 rounded-xl text-[10px] font-bold shadow-sm z-[1000] flex flex-col gap-1 border border-gray-100">
+                                        <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-red-500 border border-red-200"></div>¡Alerta Perdido!</div>
                                     </div>
                                 </div>
                             )}
@@ -282,7 +265,6 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {/* --- VISTA: PERFIL --- */}
             {activeTab === 'perfil' && (
                 <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-500">
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6 text-gray-400">
@@ -296,7 +278,6 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* --- NAVBAR MÓVIL --- */}
       <nav className="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-lg border-t border-gray-100 flex justify-around items-center pb-safe pt-1 z-50 h-[70px]">
           <button onClick={() => setActiveTab('mascotas')} className={`flex flex-col items-center gap-1 p-2 w-16 transition-colors ${activeTab === 'mascotas' ? 'text-[#ff6f00]' : 'text-gray-400'}`}>
               <Home size={22} strokeWidth={activeTab === 'mascotas' ? 2.5 : 2} />
