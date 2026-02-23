@@ -4,25 +4,25 @@ import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// 🟠 ICONO NARANJA
-const orangeIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  tooltipAnchor: [16, -28], 
-  shadowSize: [41, 41],
-});
+// 🔵 MAGIA ACÁ: Creamos los pines circulares con HTML y Tailwind (sin imágenes externas)
+const createDotIcon = (isPerdido: boolean) => {
+  const bgColor = isPerdido ? 'bg-red-500' : 'bg-[#ff6f00]';
+  // Si está perdido, le agregamos un efecto de "latido" (ping) por detrás
+  const pulseEffect = isPerdido ? `<div class="absolute inset-0 rounded-full ${bgColor} animate-ping opacity-50"></div>` : '';
 
-// 🔴 ICONO ROJO (Para mascotas perdidas)
-const redIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    tooltipAnchor: [16, -28], 
-    shadowSize: [41, 41],
-});
+  return L.divIcon({
+    className: 'bg-transparent border-0', // Limpiamos los estilos feos por defecto de Leaflet
+    html: `
+      <div class="relative flex items-center justify-center w-6 h-6">
+        ${pulseEffect}
+        <div class="relative z-10 w-4 h-4 rounded-full ${bgColor} border-2 border-white shadow-md"></div>
+      </div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12], // Centra el punto exacto en la coordenada
+    tooltipAnchor: [0, -16], // Hace que la tarjeta flotante salga justo arriba del circulito
+  });
+};
 
 export default function MapaComunitario({ mascotas }: { mascotas: any[] }) {
   const [isMounted, setIsMounted] = useState(false);
@@ -48,7 +48,6 @@ export default function MapaComunitario({ mascotas }: { mascotas: any[] }) {
             {mascotas.map((pet) => {
                 if (!pet.lat || !pet.lng) return null;
                 
-                const finalIcon = pet.perdido ? redIcon : orangeIcon;
                 const borderColor = pet.perdido ? 'border-red-500' : 'border-[#ff6f00]';
                 const badgeBg = pet.perdido ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600';
                 const statusText = pet.perdido ? '¡PERDIDO!' : 'ACTIVO';
@@ -57,9 +56,11 @@ export default function MapaComunitario({ mascotas }: { mascotas: any[] }) {
                 <Marker 
                     key={pet.id} 
                     position={[pet.lat, pet.lng]} 
-                    icon={finalIcon}
+                    // Generamos el icono circular sobre la marcha dependiendo del estado
+                    icon={createDotIcon(pet.perdido)}
                 >
-                    <Tooltip direction="top" offset={[-15, -45]} opacity={1} className="!bg-transparent !border-0 !shadow-none !p-0">
+                    {/* El Tooltip sigue siendo el mismo diseño flotante Premium */}
+                    <Tooltip direction="top" offset={[0, -5]} opacity={1} className="!bg-transparent !border-0 !shadow-none !p-0">
                         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl p-3 w-44 border border-gray-100 flex flex-col items-center relative mt-2">
                             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-b border-r border-gray-100 z-0"></div>
 
