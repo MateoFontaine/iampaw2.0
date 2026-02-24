@@ -4,15 +4,18 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-lea
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// --- ARREGLO DE ICONOS ---
-const icon = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+// --- NUEVO PIN NARANJA MINIMALISTA ---
+const customIcon = L.divIcon({
+  className: 'bg-transparent border-0',
+  html: `
+    <div class="relative flex items-center justify-center w-6 h-6">
+      <div class="absolute inset-0 rounded-full bg-[#ff6f00] animate-ping opacity-30"></div>
+      <div class="relative z-10 w-4 h-4 rounded-full bg-[#ff6f00] border-2 border-white shadow-md"></div>
+      <div class="absolute w-0.5 h-3 bg-[#ff6f00] top-full left-1/2 -translate-x-1/2 -mt-1 shadow-sm"></div>
+    </div>
+  `,
+  iconSize: [24, 32],
+  iconAnchor: [12, 32],
 });
 
 // --- COMPONENTE AUXILIAR: MUEVE LA CÁMARA CUANDO CAMBIA LA POSICIÓN ---
@@ -35,7 +38,7 @@ function LocationMarker({ position, setPosition }: any) {
   });
 
   return position === null ? null : (
-    <Marker position={position} icon={icon}></Marker>
+    <Marker position={position} icon={customIcon}></Marker>
   );
 }
 

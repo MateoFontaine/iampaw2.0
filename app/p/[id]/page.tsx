@@ -1,9 +1,6 @@
 import { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import FormularioRegistro from '@/components/FormularioRegistro';
-// Importamos el componente de mapa (Dinámico no hace falta acá porque es Server Component la página, 
-// pero el componente Mapa sí debe ser cliente).
-// TRUCO: Como esta es una Server Page, vamos a crear un componente cliente chiquito para el mapa.
 import MapaPublico from '@/components/MapaPublico'; 
 
 const supabase = createClient(
@@ -87,17 +84,34 @@ export default async function ChapitaPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-white font-sans pb-10">
       
-      {/* --- HERO IMAGE --- */}
-      <div className="relative h-[60vh] w-full bg-gray-200">
+      {/* --- HERO IMAGE (Agrandada a 65vh) --- */}
+      <div className="relative h-[65vh] w-full bg-gray-200">
         {mascota.foto_url ? (
-          <img src={mascota.foto_url} alt={mascota.nombre} className="w-full h-full object-cover"/>
+          <>
+            {/* TRUCO CSS: Checkbox oculto para manejar el clic y el modal */}
+            <input type="checkbox" id="zoom-foto" className="peer hidden" />
+            
+            {/* Foto normal (es el botón que activa el checkbox) */}
+            <label htmlFor="zoom-foto" className="block w-full h-full cursor-pointer">
+                <img src={mascota.foto_url} alt={mascota.nombre} className="w-full h-full object-cover"/>
+            </label>
+
+            {/* MODAL FULLSCREEN (Se muestra cuando se hace clic en la foto) */}
+            <div className="fixed inset-0 z-[9999] bg-black/95 hidden peer-checked:flex flex-col items-center justify-center animate-in fade-in duration-200">
+                <label htmlFor="zoom-foto" className="absolute top-6 right-6 text-white cursor-pointer bg-white/10 p-3 rounded-full hover:bg-white/20 transition">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </label>
+                <img src={mascota.foto_url} alt={mascota.nombre} className="max-w-[100vw] max-h-[100vh] object-contain select-none" />
+            </div>
+          </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 text-gray-300 font-medium text-sm">Sin foto</div>
         )}
         
-        <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent ${isLost ? 'animate-pulse bg-red-900/20' : ''}`}></div>
+        {/* Le ponemos pointer-events-none al gradiente para que deje hacer clic en la foto */}
+        <div className={`absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-black/10 to-transparent ${isLost ? 'animate-pulse bg-red-900/20' : ''}`}></div>
 
-        <div className="absolute bottom-12 left-6 right-6">
+        <div className="absolute bottom-12 left-6 right-6 pointer-events-none">
             <div className="flex items-center gap-2 mb-2">
                 {isLost ? (
                      <span className="bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow-sm tracking-wider uppercase animate-bounce">🚨 ¡ESTOY PERDIDO!</span>
