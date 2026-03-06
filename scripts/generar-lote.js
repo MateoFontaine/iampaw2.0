@@ -13,8 +13,8 @@ const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 
 // --- CONFIGURACIÓN DEL LOTE ---
-const CANTIDAD = 20;  // Cantidad de chapitas a generar
-const PREFIJO = 'A';  // Letra del lote (A, B, C...)
+const CANTIDAD = 2;  // Cantidad de chapitas a generar
+const PREFIJO = '1';  // Letra del lote (A, B, C...)
 
 // 🔥 CAMBIO CLAVE: Ponemos el dominio oficial directo aquí
 const DOMINIO = 'https://www.iampaw.com.ar'; 
